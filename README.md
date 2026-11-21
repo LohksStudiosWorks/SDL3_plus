@@ -139,4 +139,6 @@ jobs:
 
 ## How to contribute?
 
-WIP
+Please fork the project and experiment on something new you may think is useful to add to this project. Then, open a pull request!
+
+You can also talk about it in [this Discord server](https://discord.gg/eQfnXdTH6f)! Many projects under LohksStudiosWorks are linked there.
