@@ -52,33 +52,60 @@ target_include_directories(SDL3Plus
 set(SDL3PLUS_LIBRARIES)
 
 if(SDL3PLUS_ENABLE_GRAPHICS OR SDL3PLUS_ENABLE_AUDIO OR SDL3PLUS_ENABLE_SOCKETS)
-    list(APPEND SDL3PLUS_LIBRARIES SDL3::SDL3)
+
+    set(_sdl3_target "")
+    if(ANDROID AND TARGET SDL3-shared)
+        set(_sdl3_target SDL3-shared)
+    elseif(NOT ANDROID AND TARGET SDL3-static)
+        set(_sdl3_target SDL3-static)
+    elseif(TARGET SDL3)
+        set(_sdl3_target SDL3)
+    endif()
+
     if(MSVC)
         set(_sdl3_no_opt_flag "/Od")
     else()
         set(_sdl3_no_opt_flag "-O0")
     endif()
 
-    target_compile_options(SDL3-static PRIVATE
-        $<$<AND:$<CONFIG:Release>,$<COMPILE_LANGUAGE:C,CXX>>:${_sdl3_no_opt_flag}>
-    )
+    if(_sdl3_target)
+        target_compile_options(${_sdl3_target} PRIVATE
+            $<$<AND:$<CONFIG:Release>,$<COMPILE_LANGUAGE:C,CXX>>:${_sdl3_no_opt_flag}>
+        )
+    endif()
+
+    add_library(SDL3Plus_Base INTERFACE)
+    add_library(SDL3Plus::Base ALIAS SDL3Plus_Base)
+    target_link_libraries(SDL3Plus_Base INTERFACE SDL3::SDL3)
+
+    list(APPEND SDL3PLUS_LIBRARIES SDL3Plus_Base)
 endif()
 
 if(SDL3PLUS_ENABLE_GRAPHICS)
-    list(APPEND SDL3PLUS_LIBRARIES SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf)
+    add_library(SDL3Plus_Graphics INTERFACE)
+    add_library(SDL3Plus::Graphics ALIAS SDL3Plus_Graphics)
+    target_link_libraries(SDL3Plus_Graphics INTERFACE SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf)
+
+    list(APPEND SDL3PLUS_LIBRARIES SDL3Plus_Graphics)
 endif()
 
 if(SDL3PLUS_ENABLE_AUDIO)
-    list(APPEND SDL3PLUS_LIBRARIES SDL3_mixer::SDL3_mixer)
+    add_library(SDL3Plus_Audio INTERFACE)
+    add_library(SDL3Plus::Audio ALIAS SDL3Plus_Audio)
+    target_link_libraries(SDL3Plus_Audio INTERFACE SDL3_mixer::SDL3_mixer)
+
+    list(APPEND SDL3PLUS_LIBRARIES SDL3Plus_Audio)
 endif()
 
 if(SDL3PLUS_ENABLE_SOCKETS)
-    list(APPEND SDL3PLUS_LIBRARIES SDL3_net::SDL3_net)
+    add_library(SDL3Plus_Sockets INTERFACE)
+    add_library(SDL3Plus::Sockets ALIAS SDL3Plus_Sockets)
+    target_link_libraries(SDL3Plus_Sockets INTERFACE SDL3_net::SDL3_net)
+
+    list(APPEND SDL3PLUS_LIBRARIES SDL3Plus_Sockets)
 endif()
 
 if(SDL3PLUS_ENABLE_HTTP)
-    list(APPEND SDL3PLUS_LIBRARIES httplib::httplib)
-
     file(RELATIVE_PATH SDL3PLUS_CERTIFICATE_RELATIVE
         "${CMAKE_CURRENT_SOURCE_DIR}"
         "${CERTIFICATE_FILE}"
@@ -90,10 +117,20 @@ if(SDL3PLUS_ENABLE_HTTP)
     target_compile_definitions(SDL3Plus PRIVATE
         SDL3PLUS_CERTIFICATE_KEY="${SDL3PLUS_CERTIFICATE_RELATIVE}"
     )
+
+    add_library(SDL3Plus_HTTP INTERFACE)
+    add_library(SDL3Plus::HTTP ALIAS SDL3Plus_HTTP)
+    target_link_libraries(SDL3Plus_HTTP INTERFACE httplib::httplib)
+
+    list(APPEND SDL3PLUS_LIBRARIES SDL3Plus_HTTP)
 endif()
 
 if(SDL3PLUS_ENABLE_JSON)
-    list(APPEND SDL3PLUS_LIBRARIES nlohmann_json::nlohmann_json)
+    add_library(SDL3Plus_JSON INTERFACE)
+    add_library(SDL3Plus::JSON ALIAS SDL3Plus_JSON)
+    target_link_libraries(SDL3Plus_JSON INTERFACE nlohmann_json::nlohmann_json)
+
+    list(APPEND SDL3PLUS_LIBRARIES SDL3Plus_JSON)
 endif()
 
 target_link_libraries(SDL3Plus PUBLIC ${SDL3PLUS_LIBRARIES})
