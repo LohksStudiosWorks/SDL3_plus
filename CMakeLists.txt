@@ -53,6 +53,15 @@ set(SDL3PLUS_LIBRARIES)
 
 if(SDL3PLUS_ENABLE_GRAPHICS OR SDL3PLUS_ENABLE_AUDIO OR SDL3PLUS_ENABLE_SOCKETS)
     list(APPEND SDL3PLUS_LIBRARIES SDL3::SDL3)
+    if(MSVC)
+        set(_sdl3_no_opt_flag "/Od")
+    else()
+        set(_sdl3_no_opt_flag "-O0")
+    endif()
+
+    target_compile_options(SDL3-static PRIVATE
+        $<$<AND:$<CONFIG:Release>,$<COMPILE_LANGUAGE:C,CXX>>:${_sdl3_no_opt_flag}>
+    )
 endif()
 
 if(SDL3PLUS_ENABLE_GRAPHICS)
