@@ -62,6 +62,8 @@ sdl3plus_add_game(${PROJECT_NAME}
         # ...
     ICON
         resources/icon.png # Icon used for Android build. Not required for desktop applications
+    STUDIO
+        studioname # Used in Android, not required, but it'll default to 'template'!
 )
 
 # Used for signing APK

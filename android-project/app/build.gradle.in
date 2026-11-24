@@ -2,17 +2,23 @@ plugins {
      id 'com.android.application'
 }
 
-def buildWithCMake = project.hasProperty('BUILD_WITH_CMAKE');
+def rawGameName = project.findProperty("gameName") ?: "MyGame"
+def studioName = (project.findProperty("studioName") ?: "template").toLowerCase(Locale.ROOT).replaceAll(/[^a-z0-9]/, "") ?: "template"
+def safeName = rawGameName.toLowerCase(Locale.ROOT).replaceAll(/[^a-z0-9]/, "") ?: "mygame"
+def defaultAppId = "com.${studioName}.${safeName}"
+def defVersionCode = (project.findProperty("versionCode") ?: "1").toInteger()
+def defVersionName = project.findProperty("versionName") ?: "1.0"
 
 android {
     namespace = "org.libsdl.app"
     compileSdkVersion 35
     ndkVersion = "28.2.13676358"
     defaultConfig {
+        applicationId defaultAppId
         minSdkVersion 21
         targetSdkVersion 35
-        versionCode 1
-        versionName "1.0"
+        versionCode defVersionCode
+        versionName defVersionName
         externalNativeBuild {
             ndkBuild {
                 arguments "APP_PLATFORM=android-21"
@@ -26,10 +32,8 @@ android {
                 cppFlags "-std=c++23"
             }
         }
-
-        def gameName = project.findProperty("gameName") ?: "MyGame"
-
-        resValue "string", "app_name", gameName
+        
+        resValue "string", "app_name", rawGameName
     }
     signingConfigs {
         release {
@@ -56,7 +60,7 @@ android {
         }
         externalNativeBuild {
             cmake {
-                path "@GAME_CMAKE_PROJECT@" //"../../CMakeLists.txt"  // Path relative to android/app/
+                path "/media/lohk/LOHK4TB/Github/LohksStudiosWorks/Epic-Maze/CMakeLists.txt" //"../../CMakeLists.txt"  // Path relative to android/app/
                 version "4.1.2"
             }
         }
@@ -86,15 +90,16 @@ java {
 def outputDirectory = project.findProperty("outputDir")
         ?: "${rootProject.projectDir}/../../../../bin"
 
-def gameName = project.findProperty("gameName")
-        ?: "MyGame"
-
 tasks.register('copyRelease', Copy) {
     dependsOn 'assembleRelease'
+
+    doFirst {
+        logger.lifecycle("Finishing ${android.defaultConfig.applicationId} (${rawGameName}) - ${versionName} (${defVersionCode})")
+    }
 
     from("$buildDir/outputs/apk/release")
     include('app-release.apk')
     into(outputDirectory)
 
-    rename('app-release.apk', "${gameName}-android-release.apk")
+    rename('app-release.apk', "${rawGameName}-android-release.apk")
 }

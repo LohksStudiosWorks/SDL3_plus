@@ -61,12 +61,16 @@ function(sdl3plus_setup_android TARGET_NAME)
     cmake_parse_arguments(
         ANDROID
         ""
-        "ICON"
+        "ICON;STUDIO"
         ""
         ${ARGN}
     )
 
-    message(STATUS "Configuring SDL3plus Android project...")    
+    message(STATUS "Configuring SDL3plus Android project...")
+     
+    if(NOT ANDROID_STUDIO)
+        set(ANDROID_STUDIO "template")
+    endif()
 
     set(SDL3PLUS_ANDROID_DIR
         "${CMAKE_BINARY_DIR}/_sdl3plus/android/${TARGET_NAME}"
@@ -115,12 +119,39 @@ function(sdl3plus_setup_android TARGET_NAME)
         )
     endif()
 
+    set(_ver_major 1)
+    set(_ver_minor 0)
+    set(_ver_patch 0)
+
+    if(CMAKE_PROJECT_VERSION MATCHES "^([0-9]+)(\\.([0-9]+))?(\\.([0-9]+))?")
+        set(_ver_major "${CMAKE_MATCH_1}")
+        if(CMAKE_MATCH_3)
+            set(_ver_minor "${CMAKE_MATCH_3}")
+        endif()
+        if(CMAKE_MATCH_5)
+            set(_ver_patch "${CMAKE_MATCH_5}")
+        endif()
+    endif()
+
+    math(EXPR VERSION_CODE "${_ver_major} * 1000000 + ${_ver_minor} * 1000 + ${_ver_patch}")
+    set(VERSION_NAME "${_ver_major}.${_ver_minor}.${_ver_patch}")
+
+    message(STATUS "Configured SDL3plus Android project:")
+    message(STATUS "- Game Name: ${TARGET_NAME}")
+    message(STATUS "- Studio Name: ${ANDROID_STUDIO}")
+    message(STATUS "- Output Dir: ${CMAKE_BINARY_DIR}/bin")
+    message(STATUS "- Version code: ${VERSION_CODE}")
+    message(STATUS "- Version name: ${VERSION_NAME}")
+
     add_custom_target(${TARGET_NAME}_android_release
         COMMAND "${SDL3PLUS_GRADLE}" 
             assembleRelease
             copyRelease
             "-PgameName=${TARGET_NAME}"
+            "-PstudioName=${ANDROID_STUDIO}"
             "-PoutputDir=${CMAKE_BINARY_DIR}/bin"
+            "-PversionCode=${VERSION_CODE}"
+            "-PversionName=${VERSION_NAME}"
         WORKING_DIRECTORY "${SDL3PLUS_ANDROID_DIR}"
         USES_TERMINAL
         COMMENT "Building Android release APK..."
@@ -135,7 +166,7 @@ function(sdl3plus_add_game TARGET_NAME)
     cmake_parse_arguments(
         GAME
         ""
-        "ICON"
+        "ICON;STUDIO"
         "SOURCES"
         ${ARGN}
     )
@@ -198,6 +229,7 @@ function(sdl3plus_add_game TARGET_NAME)
         sdl3plus_setup_android(
             ${TARGET_NAME}
             ICON "${GAME_ICON}"
+            STUDIO "${GAME_STUDIO}"
         )
     endif()
 endfunction()
