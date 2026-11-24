@@ -18,7 +18,16 @@ This is a library that wraps:
 - [JSON](https://github.com/nlohmann/json) - Classic Nlohmann's JSON library for JSON parsing and building.
 - [MbedTLS](https://github.com/Mbed-TLS/mbedtls) - Library to enable Cpp-HttpLib to have the security part (HTTPS/TLS) on all platforms.
 
-The project combines these libraries into one called `SDL3_plus`, which is pre-configured to compile for `Windows`, `Linux`, `macOS`, and `Android`.
+The project combines these libraries into one called `SDL3_plus::SDL3_plus`, which is pre-configured to compile for `Windows`, `Linux`, `macOS`, and `Android`.
+
+You can also find smaller combined ones like these:
+
+- `SDL3Plus::Base`: The SDL3 itself, enabled by default with any of the options `SDL3PLUS_ENABLE_GRAPHICS`, `SDL3PLUS_ENABLE_AUDIO`, or `SDL3PLUS_ENABLE_SOCKETS`.
+- `SDL3Plus::Graphics`: The SDL Image and SDL TTF, enabled by default with the option `SDL3PLUS_ENABLE_GRAPHICS`.
+- `SDL3Plus::Audio`: The SDL3 Mixer, enabled by default with the option `SDL3PLUS_ENABLE_AUDIO`.
+- `SDL3Plus::Sockets`: The SDL3 Net, enabled by default with the option `SDL3PLUS_ENABLE_SOCKETS`.
+- `SDL3Plus::HTTP`: The CppHttpLib and MbedTLS integrated with it, enabled by default with the option `SDL3PLUS_ENABLE_HTTP`.
+- `SDL3Plus::JSON`: The Nlohmann's JSON, enabled by default with the option `SDL3PLUS_ENABLE_JSON`.
 
 This was created for that: make it way easier for anyone to build cross-platform C++ SDL3 rich applications with no hurdle. No more messing around CMake to make it compile on each platform to then later break something. This makes the process way easier! Try it!
 
@@ -29,7 +38,7 @@ Also, this is configured for `monolith`/`static` builds. What that means is that
 Easy. This is a CMake project in the end. You just have to fetch it in your project and use it.
 
 ```cmake
-cmake_minimum_version(3.28)
+cmake_minimum_required(VERSION 3.28)
 
 project(YourProject # Rename if needed
     VERSION 1.0.0
