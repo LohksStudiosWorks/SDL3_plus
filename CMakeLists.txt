@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.28)
+set(SDL3PLUS_VERSION 1.0.2)
 
 project(SDL3_Plus
-    VERSION 1.0.2
+    VERSION ${SDL3PLUS_VERSION}
     DESCRIPTION "Base for game dev with SDL3 + useful extras built in"
     LANGUAGES C CXX
 )
 
-message(STATUS "# Setting up SDL3_plus version ${CMAKE_PROJECT_VERSION}...")
+message(STATUS "# Setting up SDL3_plus version ${SDL3PLUS_VERSION}...")
 
 # >> Options!
 
@@ -151,4 +152,4 @@ if(SDL3PLUS_BUILD_EXAMPLE)
     add_subdirectory(main)
 endif()
 
-message(STATUS "# Finished setup for SDL3_plus version ${CMAKE_PROJECT_VERSION}.")
+message(STATUS "# Finished setup for SDL3_plus version ${SDL3PLUS_VERSION}.")
