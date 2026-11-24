@@ -60,7 +60,7 @@ android {
         }
         externalNativeBuild {
             cmake {
-                path "/media/lohk/LOHK4TB/Github/LohksStudiosWorks/Epic-Maze/CMakeLists.txt" //"../../CMakeLists.txt"  // Path relative to android/app/
+                path "@GAME_CMAKE_PROJECT@" //"../../CMakeLists.txt"  // Path relative to android/app/
                 version "4.1.2"
             }
         }
