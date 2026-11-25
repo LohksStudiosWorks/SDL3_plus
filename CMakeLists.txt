@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
-set(SDL3PLUS_VERSION 1.0.2)
+set(SDL3PLUS_VERSION 1.0.3)
 
 project(SDL3_Plus
     VERSION ${SDL3PLUS_VERSION}
