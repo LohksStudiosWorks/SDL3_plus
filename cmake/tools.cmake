@@ -208,7 +208,7 @@ function(sdl3plus_add_game TARGET_NAME)
             OUTPUT_NAME main
         )
     else()
-        add_executable(${TARGET_NAME} ${GAME_SOURCES})
+        add_executable(${TARGET_NAME} WIN32 ${GAME_SOURCES})
 
         set_target_properties(${TARGET_NAME} PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
